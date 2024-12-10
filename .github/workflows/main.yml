@@ -1,0 +1,36 @@
+name: Build and Deploy to Azure
+
+on:
+  push:
+    branches: [ "main" ] 
+  workflow_dispatch:   
+
+env:
+  AZURE_WEBAPP_NAME: your-webapp-name   
+  REGISTRY_NAME: vbellens-acr     
+  IMAGE_NAME: flask-app     
+  
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+    - name: Build and push image to ACR
+      run: |
+        az acr login --name ${{ env.REGISTRY_NAME }}
+        az acr build --image ${{ env.IMAGE_NAME }}:${{ github.sha }} \
+          --registry ${{ env.REGISTRY_NAME }} \
+          --file Dockerfile .
+          
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ env.AZURE_WEBAPP_NAME }}
+        images: '${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ github.sha }}'
