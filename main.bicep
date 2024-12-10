@@ -54,7 +54,14 @@ module webApp 'modules/webApp.bicep' = {
     appSettingsKeyValuePairs: {
       WEBSITES_ENABLE_APP_SERVICE_STORAGE: 'false'
       DOCKER_REGISTRY_SERVER_URL: 'https://${acr.outputs.loginServer}'
+      DOCKER_REGISTRY_SERVER_USERNAME: existingAcr.name
+      DOCKER_REGISTRY_SERVER_PASSWORD: existingAcr.listCredentials().passwords[0].value
     }
     acrName: acr.outputs.registryName
   }
 }
+// Get existing ACR reference
+resource existingAcr 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
+  name: acr.outputs.registryName
+}
+
