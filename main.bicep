@@ -1,5 +1,7 @@
+@minLength(5)
+@maxLength(50)
 @description('Base name for all resources')
-param baseName string = 'myapp'
+param baseName string = 'vbellens2024'
 
 @description('Location for all resources')
 param location string = resourceGroup().location
@@ -14,7 +16,7 @@ param containerRegistryImageVersion string = 'latest'
 module acr 'modules/acr.bicep' = {
   name: 'acrDeploy'
   params: {
-    name: '${baseName}acr'
+    name: replace(toLower('${baseName}acr'), '-', '')
     location: location
   }
 }
