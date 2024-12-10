@@ -11,7 +11,7 @@ param containerRegistryImageName string = 'myapp'
 param containerRegistryImageVersion string = 'latest'
 
 // Deploy Azure Container Registry
-module acr 'acr.bicep' = {
+module acr 'modules/acr.bicep' = {
   name: 'acrDeploy'
   params: {
     name: '${baseName}acr'
@@ -21,7 +21,7 @@ module acr 'acr.bicep' = {
 }
 
 // Deploy App Service Plan
-module appServicePlan 'appServicePlan.bicep' = {
+module appServicePlan 'modules/appServicePlan.bicep' = {
   name: 'appServicePlanDeploy'
   params: {
     name: '${baseName}-asp'
@@ -39,7 +39,7 @@ module appServicePlan 'appServicePlan.bicep' = {
 }
 
 // Deploy Web App
-module webApp 'webApp.bicep' = {
+module webApp 'modules/webApp.bicep' = {
   name: 'webAppDeploy'
   params: {
     name: '${baseName}-webapp'
