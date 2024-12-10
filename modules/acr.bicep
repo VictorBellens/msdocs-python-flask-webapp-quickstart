@@ -19,5 +19,6 @@ resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
 }
 
 output loginServer string = acr.properties.loginServer
+output registryName string = acr.name
 output adminUsername string = acrAdminUserEnabled ? acr.listCredentials().username : ''
 output adminPassword string = acrAdminUserEnabled ? acr.listCredentials().passwords[0].value : ''
