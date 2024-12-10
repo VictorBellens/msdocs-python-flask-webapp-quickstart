@@ -16,7 +16,6 @@ module acr 'modules/acr.bicep' = {
   params: {
     name: '${baseName}acr'
     location: location
-    acrAdminUserEnabled: true
   }
 }
 
@@ -53,8 +52,7 @@ module webApp 'modules/webApp.bicep' = {
     appSettingsKeyValuePairs: {
       WEBSITES_ENABLE_APP_SERVICE_STORAGE: 'false'
       DOCKER_REGISTRY_SERVER_URL: 'https://${acr.outputs.loginServer}'
-      DOCKER_REGISTRY_SERVER_USERNAME: acr.outputs.adminUsername
-      DOCKER_REGISTRY_SERVER_PASSWORD: acr.outputs.adminPassword
     }
+    acrName: acr.outputs.registryName
   }
 }
