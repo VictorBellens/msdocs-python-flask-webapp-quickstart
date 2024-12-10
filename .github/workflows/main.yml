@@ -24,6 +24,6 @@ jobs:
         uses: azure/arm-deploy@v1
         with:
           subscriptionId: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
-          resourceGroupName: ${{ secrets.AZURE_RG }}
+          resourceGroupName: 'BCSAI2024-DEVOPS-STUDENTS-B-DEV'
           template: ./main.bicep
           failOnStdErr: false 
