@@ -26,4 +26,5 @@ jobs:
           subscriptionId: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
           resourceGroupName: 'BCSAI2024-DEVOPS-STUDENTS-B-DEV'
           template: ./main.bicep
+          parameters: ./main.parameters.json
           failOnStdErr: false 
