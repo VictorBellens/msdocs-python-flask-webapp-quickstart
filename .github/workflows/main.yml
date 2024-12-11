@@ -28,3 +28,24 @@ jobs:
           template: ./main.bicep
           parameters: ./main.parameters.json
           failOnStdErr: false 
+
+  build-and-deploy:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Build and push Docker image
+        run: |
+          az acr login --name vbellens2024acr
+          docker build . -t vbellens2024acr.azurecr.io/myflaskapp:latest
+          docker push vbellens2024acr.azurecr.io/myflaskapp:latest
+      
+      - name: Restart Web App
+        run: |
+          az webapp restart --name vbellens2024-webapp --resource-group BCSAI2024-DEVOPS-STUDENTS-B-DEV
