@@ -2,14 +2,20 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-      "baseName": {
-        "value": "vbellens-flask-app"
-      },
       "location": {
-        "value": "easteurope"
+        "value": "westeurope"
+      },
+      "acrName": {
+        "value": "vbellens2024acr"
+      },
+      "appServicePlanName": {
+        "value": "vbellens2024-asp"
+      },
+      "webAppName": {
+        "value": "vbellens2024-webapp"
       },
       "containerRegistryImageName": {
-        "value": "vbellens-cri"
+        "value": "myflaskapp"
       },
       "containerRegistryImageVersion": {
         "value": "latest"

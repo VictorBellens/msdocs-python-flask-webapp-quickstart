@@ -1,8 +1,6 @@
-@description('Name of the Azure Container Registry')
 param name string
-
-@description('Location for the Azure Container Registry')
 param location string
+param acrAdminUserEnabled bool = true
 
 resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
   name: name
@@ -11,9 +9,9 @@ resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
     name: 'Basic'
   }
   properties: {
-    adminUserEnabled: false
+    adminUserEnabled: acrAdminUserEnabled
   }
 }
 
 output loginServer string = acr.properties.loginServer
-output registryName string = acr.name
+output adminUsername string = acr.name

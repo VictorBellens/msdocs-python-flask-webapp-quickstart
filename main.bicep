@@ -1,31 +1,25 @@
-@minLength(5)
-@maxLength(50)
-@description('Base name for all resources')
-param baseName string = 'vbellens2024'
+param location string
+param acrName string
+param appServicePlanName string
+param webAppName string
+param containerRegistryImageName string
+param containerRegistryImageVersion string
 
-@description('Location for all resources')
-param location string = resourceGroup().location
-
-@description('Container image name')
-param containerRegistryImageName string = 'myapp'
-
-@description('Container image version/tag')
-param containerRegistryImageVersion string = 'latest'
-
-// Deploy Azure Container Registry
-module acr 'modules/acr.bicep' = {
+// Deploy ACR
+module acr './modules/acr.bicep' = {
   name: 'acrDeploy'
   params: {
-    name: replace(toLower('${baseName}acr'), '-', '')
+    name: acrName
     location: location
+    acrAdminUserEnabled: true
   }
 }
 
 // Deploy App Service Plan
-module appServicePlan 'modules/appServicePlan.bicep' = {
+module appServicePlan './modules/appServicePlan.bicep' = {
   name: 'appServicePlanDeploy'
   params: {
-    name: '${baseName}-asp'
+    name: appServicePlanName
     location: location
     sku: {
       capacity: 1
@@ -34,16 +28,19 @@ module appServicePlan 'modules/appServicePlan.bicep' = {
       size: 'B1'
       tier: 'Basic'
     }
-    kind: 'Linux'
-    reserved: true
   }
 }
 
+// Get ACR password
+resource existingAcr 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
+  name: acrName
+}
+
 // Deploy Web App
-module webApp 'modules/webApp.bicep' = {
+module webApp './modules/webApp.bicep' = {
   name: 'webAppDeploy'
   params: {
-    name: '${baseName}-webapp'
+    name: webAppName
     location: location
     kind: 'app'
     serverFarmResourceId: appServicePlan.outputs.id
@@ -54,14 +51,8 @@ module webApp 'modules/webApp.bicep' = {
     appSettingsKeyValuePairs: {
       WEBSITES_ENABLE_APP_SERVICE_STORAGE: 'false'
       DOCKER_REGISTRY_SERVER_URL: 'https://${acr.outputs.loginServer}'
-      DOCKER_REGISTRY_SERVER_USERNAME: existingAcr.name
+      DOCKER_REGISTRY_SERVER_USERNAME: acr.outputs.adminUsername
       DOCKER_REGISTRY_SERVER_PASSWORD: existingAcr.listCredentials().passwords[0].value
     }
-    acrName: acr.outputs.registryName
   }
 }
-// Get existing ACR reference
-resource existingAcr 'Microsoft.ContainerRegistry/registries@2023-07-01' existing = {
-  name: acr.outputs.registryName
-}
-
